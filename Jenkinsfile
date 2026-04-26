@@ -4,6 +4,7 @@ pipeline {
     environment {
         IMAGE_NAME = "runtimeterror01/vle7-app"
         IMAGE_TAG  = "v${BUILD_NUMBER}"
+        KUBECONFIG = "C:\\Users\\${env.USERNAME}\\.kube\\config"
     }
 
     stages {
@@ -42,10 +43,10 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-                bat 'kubectl config use-context docker-desktop'
-                bat 'kubectl apply -f k8s/deployment.yaml --validate=false'
-                bat 'kubectl apply -f k8s/service.yaml --validate=false'
-                bat 'kubectl rollout status deployment/vle7-app'
+                bat 'kubectl --kubeconfig="%USERPROFILE%\\.kube\\config" config use-context docker-desktop'
+                bat 'kubectl --kubeconfig="%USERPROFILE%\\.kube\\config" apply -f k8s/deployment.yaml --validate=false'
+                bat 'kubectl --kubeconfig="%USERPROFILE%\\.kube\\config" apply -f k8s/service.yaml --validate=false'
+                bat 'kubectl --kubeconfig="%USERPROFILE%\\.kube\\config" rollout status deployment/vle7-app'
             }
         }
     }
