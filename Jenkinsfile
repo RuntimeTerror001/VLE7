@@ -16,8 +16,8 @@ pipeline {
 
         stage('Build & Test') {
             steps {
-                sh 'pip install -r app/requirements.txt'
-                sh 'echo No tests yet - VLE7'
+                bat 'pip install -r app/requirements.txt'
+                bat 'echo No tests yet - VLE7'
             }
         }
 
@@ -43,10 +43,10 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 withKubeConfig([credentialsId: 'kubeconfig']) {
-                    sh "sed -i 's|IMAGE_PLACEHOLDER|${IMAGE_NAME}:${IMAGE_TAG}|g' k8s/deployment.yaml"
-                    sh 'kubectl apply -f k8s/deployment.yaml'
-                    sh 'kubectl apply -f k8s/service.yaml'
-                    sh 'kubectl rollout status deployment/vle7-app'
+                    bat "powershell -Command \"(Get-Content k8s/deployment.yaml) -replace 'IMAGE_PLACEHOLDER', '${IMAGE_NAME}:${IMAGE_TAG}' | Set-Content k8s/deployment.yaml\""
+                    bat 'kubectl apply -f k8s/deployment.yaml'
+                    bat 'kubectl apply -f k8s/service.yaml'
+                    bat 'kubectl rollout status deployment/vle7-app'
                 }
             }
         }
