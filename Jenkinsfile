@@ -43,7 +43,6 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 withKubeConfig([credentialsId: 'kubeconfig']) {
-                    bat "powershell -Command \"(Get-Content k8s/deployment.yaml) -replace 'IMAGE_PLACEHOLDER', '${IMAGE_NAME}:${IMAGE_TAG}' | Set-Content k8s/deployment.yaml\""
                     bat 'kubectl apply -f k8s/deployment.yaml'
                     bat 'kubectl apply -f k8s/service.yaml'
                     bat 'kubectl rollout status deployment/vle7-app'
