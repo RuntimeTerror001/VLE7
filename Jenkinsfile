@@ -42,10 +42,12 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-                withKubeConfig([credentialsId: 'kubeconfig']) {
-                    bat 'kubectl apply -f k8s/deployment.yaml'
-                    bat 'kubectl apply -f k8s/service.yaml'
-                    bat 'kubectl rollout status deployment/vle7-app'
+                withCredentials([string(credentialsId: 'kubeconfig', variable: 'KUBECONFIG_CONTENT')]) {
+                    bat 'echo %KUBECONFIG_CONTENT% > kubeconfig-temp.yaml'
+                    bat 'kubectl --kubeconfig=kubeconfig-temp.yaml apply -f k8s/deployment.yaml'
+                    bat 'kubectl --kubeconfig=kubeconfig-temp.yaml apply -f k8s/service.yaml'
+                    bat 'kubectl --kubeconfig=kubeconfig-temp.yaml rollout status deployment/vle7-app'
+                    bat 'del kubeconfig-temp.yaml'
                 }
             }
         }
